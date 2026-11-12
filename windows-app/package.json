@@ -1,0 +1,28 @@
+{
+  "name": "docenlume-windows",
+  "version": "0.4.7",
+  "private": true,
+  "scripts": {
+    "start": "react-native start",
+    "windows": "react-native run-windows",
+    "typecheck": "tsc --noEmit",
+    "build:windows": "react-native run-windows --release --arch x64 --no-deploy --no-launch --no-packager --no-telemetry"
+  },
+  "dependencies": {
+    "react": "19.2.3",
+    "react-native": "0.85.3",
+    "react-native-windows": "0.85.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@react-native-community/cli": "20.1.0",
+    "@react-native/babel-preset": "0.85.3",
+    "@react-native/metro-config": "0.85.3",
+    "@react-native/typescript-config": "0.85.3",
+    "@types/react": "^19.2.0",
+    "typescript": "~5.9.3"
+  },
+  "engines": {
+    "node": "^22.13.0 || ^24.3.0"
+  }
+}

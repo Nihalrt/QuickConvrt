@@ -1,0 +1,6 @@
+PyMuPDF==1.28.2
+fonttools==4.67.0
+Pillow==12.3.0
+pyinstaller==6.22.3
+pdf2docx==0.5.13
+python-docx==1.2.0

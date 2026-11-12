@@ -1,0 +1,40 @@
+name: Build Docenlume for Windows
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'windows-app/**'
+      - 'mac-utility/Engine/**'
+      - '.github/workflows/windows.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: windows-app
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: windows-app/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: x64
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: ./build-engine.ps1
+      - run: npm run build:windows
+      - name: Verify the desktop build contains its engine and JavaScript
+        run: |
+          foreach ($Path in @('Docenlume.exe', 'Bundle/index.windows.bundle', 'engine/docenlume-engine.exe')) {
+            if (!(Test-Path (Join-Path 'build/app/Release' $Path))) { throw "Build is missing $Path" }
+          }
