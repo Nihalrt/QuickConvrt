@@ -6,16 +6,13 @@ Docenlume converts documents and images locally. Pick a file, choose a format fr
 
 ## Install on macOS
 
-Docenlume will be free to download and use. It targets **Apple Silicon Macs (M1 or newer) running macOS 13 or later**. To check your Mac, choose **Apple menu → About This Mac** and look for an Apple chip and the macOS version.
+Docenlume is free to download and use. It targets **Apple Silicon Macs (M1 or newer) running macOS 13 or later**. To check your Mac, choose **Apple menu → About This Mac** and look for an Apple chip and the macOS version.
 
-**The Mac installer is awaiting Apple notarization.** You can [build the app from source](mac-utility/README.md#build-and-install-locally) today. The installer ZIP will appear on the [Docenlume Releases page](https://github.com/Nihalrt/Docenlume/releases) when it is ready.
+**[Download the Mac preview ZIP](https://github.com/Nihalrt/Docenlume/releases/download/v0.4.13-preview/Docenlume-Mac-arm64-v0.4.13-DEV.zip).** Apple has not notarized this preview, so macOS may block it on first launch. You can also [build the app from source](mac-utility/README.md#build-and-install-locally).
 
-Once the Mac release is published:
-
-1. Open the public GitHub Releases page and select the latest Mac release. Under **Assets**, download **Docenlume-Mac-arm64-v0.4.13.zip** for the first release. On newer releases, choose the app ZIP with the matching version number.
-2. In Finder, open **Downloads** and double-click the ZIP if your browser has not already extracted it.
-3. Drag **Docenlume.app** into **Applications**. Open it from **Applications** and click **Open** if macOS asks you to confirm the first launch.
-4. Click the **Docenlume** icon in the menu bar or press **Control–Option–Command–E**. Add a file, choose an output format and save folder, then click **Convert**.
+1. In Finder, open **Downloads** and double-click the ZIP if your browser has not already extracted it.
+2. Drag **Docenlume.app** into **Applications** and open it from there.
+3. Click the **Docenlume** icon in the menu bar or press **Control–Option–Command–E**. Add a file, choose an output format and save folder, then click **Convert**.
 
 The app includes its conversion engines. You can use it without a Docenlume account, subscription, or separate Word, LibreOffice, or Python installation.
 
