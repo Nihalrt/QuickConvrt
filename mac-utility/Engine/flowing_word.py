@@ -25,12 +25,13 @@ from fontTools.ttLib.tables._c_m_a_p import CmapSubtable
 BULLETS='\u2022\uf0b7\u25cf\u25e6\u2023\u2219'
 FONT_ALIASES={'LiberationSans':'Arial','LiberationSerif':'Times New Roman','LiberationMono':'Courier New',
               'Carlito':'Calibri','Caladea':'Cambria','ArialMT':'Arial','TimesNewRomanPSMT':'Times New Roman',
+              'TimesNewRomanPS':'Times New Roman',
               'Helvetica':'Arial','Times-Roman':'Times New Roman','Courier':'Courier New'}
 
 
 def font_family(name):
     name=re.sub(r'^[A-Z]{6}\+','',name)
-    base=re.sub(r'[-, ](BoldItalic|BoldItali|BoldOblique|Bold|Italic|Oblique|Regular|Roman)$','',name)
+    base=re.sub(r'[-, ](BoldItalic|BoldItali|BoldOblique|Bold|Italic|Oblique|Regular|Roman)(?:MT)?$','',name)
     return FONT_ALIASES.get(base,FONT_ALIASES.get(name,base))
 
 
@@ -107,37 +108,65 @@ def rows_on_page(page):
     return rows
 
 
-def simple_page(page,rows):
-    if page.get_images():return False
-    if page.find_tables().tables:return False
-    links=[pymupdf.Rect(link['from']) for link in page.get_links() if link.get('uri')]
+def text_decorations(page,rows):
+    """Associate PDF underline and highlight shapes with editable text."""
+    decorations=collections.defaultdict(dict)
     for drawing in page.get_drawings():
-        # Word exports underlined links as thin filled rectangles. These can
-        # be reconstructed as underlined Word links in the native path.
         for item in drawing['items']:
-            if item[0]=='l' and abs(item[1].y-item[2].y)<=.5:continue
-            if item[0]=='re' and drawing['type']=='f':
-                rect=item[1]
-                if 0<rect.height<=1.5 and rect.width>3*rect.height and any(link.contains(rect) for link in links):continue
-            return False
+            if item[0]=='l' and abs(item[1].y-item[2].y)<=.5:
+                continue  # Existing support for pages with horizontal rules.
+            if item[0]!='re' or drawing['type']!='f':return None
+            rect=item[1]
+            if rect.width<=0 or rect.height<=0:return None
+            underline=rect.height<=1.5 and rect.width>3*rect.height
+            matched=False
+            for row in rows:
+                size=row['size'];baseline=row['baseline']
+                if underline:
+                    if not baseline-.6<=rect.y0<=baseline+size*.35:continue
+                else:
+                    if not (baseline-size*1.5<=rect.y0<baseline-size*.3 and
+                            baseline-.4<=rect.y1<=baseline+size*.6 and rect.height<=size*1.65):continue
+                    fill=drawing.get('fill')
+                    if not fill or len(fill)!=3 or all(channel>=.99 for channel in fill):continue
+                if rect.x0<row['bbox'][0]-size*.4 or rect.x1>row['bbox'][2]+size*.4:continue
+                chars=[c for line in row['lines'] for span in line['spans'] for c in span['chars']
+                       if rect.x0-.25<=(c['origin'][0]+c['bbox'][2])/2<=rect.x1+.25]
+                if not any(not c['c'].isspace() for c in chars):continue
+                matched=True
+                for char in chars:
+                    if underline:decorations[id(char)]['underline']=True
+                    else:decorations[id(char)]['shading']=''.join(f'{round(v*255):02X}' for v in fill)
+                break
+            if not matched:return None
+    return decorations
+
+
+def simple_page(page,rows,decorations):
+    if page.get_images():return False
+    if decorations is None or page.find_tables().tables:return False
     pairs=[r for r in rows if r['side_by_side']]
     if len(pairs)>max(4,len(rows)*.25):return False
     return bool(rows)
 
 
-def group_paragraphs(rows,right):
+def group_paragraphs(rows,left,right):
     paragraphs=[]
     for row in rows:
         previous=paragraphs[-1][-1] if paragraphs else None
         continuation=False
         if previous and not row['bullet'] and not row['bold'] and not row['side_by_side'] and not previous['side_by_side']:
-            first=paragraphs[-1][0]
+            group=paragraphs[-1];first=group[0]
             body_x=next((s['bbox'][0] for l in first['lines'] for s in l['spans'] if s['text'].strip() and s['text'].strip()[:1] not in BULLETS),first['bbox'][0])
+            if len(group)>1:body_x=group[1]['bbox'][0]
             aligned=abs(row['bbox'][0]-body_x)<2
-            same_style=row['italic']==previous['italic'] and abs(row['size']-previous['size'])<.3
+            first_line_indent=(len(group)==1 and not first['bullet'] and abs(row['bbox'][0]-left)<2
+                               and 4<=body_x-row['bbox'][0]<=54)
+            same_style=(row['italic']==previous['italic'] and not previous['bold']
+                        and abs(row['size']-previous['size'])<.3)
             close=0<row['baseline']-previous['baseline']<=previous['size']*1.6
             full=previous['bbox'][2]>right-max(35,(right-body_x)*.16)
-            continuation=aligned and same_style and close and full
+            continuation=(aligned or first_line_indent) and same_style and close and full
         if continuation:paragraphs[-1].append(row)
         else:paragraphs.append([row])
     return paragraphs
@@ -165,7 +194,7 @@ def bullet_numbering(doc,size,family='Arial',marker='•',rise=0):
     return nid
 
 
-def style_run(run,span,rise=0,baseline=None,end_x=None):
+def style_run(run,span,rise=0,baseline=None,end_x=None,track=True):
     run.font.name=font_family(span['font']);run._element.get_or_add_rPr().rFonts.set(qn('w:eastAsia'),run.font.name)
     size=span['size']
     # MuPDF reports the geometric mean of the horizontal and vertical
@@ -184,7 +213,7 @@ def style_run(run,span,rise=0,baseline=None,end_x=None):
             width=OxmlElement('w:w');width.set(qn('w:val'),str(width_scale))
             run._element.rPr.insert_element_before(width,'w:sz','w:szCs')
         else:width_scale=100
-        if len(chars)>1 and run.text==span['text']:
+        if track and len(chars)>1 and run.text==span['text']:
             nominal=sum(c['bbox'][2]-c['origin'][0] for c in chars)*word_size*height/size**2*width_scale/100
             end=chars[-1]['bbox'][2] if end_x is None else end_x
             tracking=round(20*(end-chars[0]['origin'][0]-nominal)/len(chars))
@@ -237,6 +266,26 @@ def span_link(span,links):
         rect=pymupdf.Rect(link['from']);inter=box&rect
         if box.width>0 and inter.width/box.width>.7 and inter.height>0:return link['uri']
     return None
+
+
+def decorated_spans(span,decorations):
+    """Split a run only where its underline or background changes."""
+    chars=span['chars']
+    if not any(id(char) in decorations for char in chars):
+        yield span,{}
+        return
+    for style,characters in itertools.groupby(chars,key=lambda char:decorations.get(id(char),{})):
+        segment=list(characters)
+        yield dict(span,chars=segment,text=''.join(char['c'] for char in segment),
+                   origin=segment[0]['origin'],
+                   bbox=(segment[0]['origin'][0],span['bbox'][1],segment[-1]['bbox'][2],span['bbox'][3])),style
+
+
+def apply_decoration(run,style):
+    if style.get('underline'):run.underline=True
+    if fill:=style.get('shading'):
+        shading=OxmlElement('w:shd');shading.set(qn('w:val'),'clear');shading.set(qn('w:fill'),fill)
+        run._element.rPr.insert_element_before(shading,'w:vertAlign','w14:ligatures')
 
 
 def embed_bullet_fonts(data,document,families):
@@ -308,17 +357,18 @@ def embed_bullet_fonts(data,document,families):
     return result.getvalue()
 
 
-def write_native(document,pages):
+def write_native(document,pages,page_decorations):
     doc=Document();normal=doc.styles['Normal'];normal.font.name='Arial'
     normal.font.size=Pt(statistics.median(r['size'] for _,rows in pages for r in rows))
     normal.paragraph_format.space_after=Pt(0);normal.paragraph_format.widow_control=False
     numbers={};count=0;bullet_families=set()
     for pi,(page,rows) in enumerate(pages):
+        decorations=page_decorations[pi]
         section=doc.sections[0] if pi==0 else doc.add_section(WD_SECTION_START.NEW_PAGE)
         left=min(r['bbox'][0] for r in rows);right=max(r['bbox'][2] for r in rows)
         section.page_width=Pt(page.rect.width);section.page_height=Pt(page.rect.height)
         section.left_margin=Pt(left);section.right_margin=Pt(max(12,page.rect.width-right))
-        groups=group_paragraphs(rows,right);geometry=paragraph_geometry(groups)
+        groups=group_paragraphs(rows,left,right);geometry=paragraph_geometry(groups)
         section.top_margin=Pt(max(0,geometry[0][0]));section.bottom_margin=Pt(max(12,min(36,page.rect.height-rows[-1]['bbox'][3])))
         section.header_distance=Pt(0);section.footer_distance=Pt(0)
         links=page.get_links();previous_end=geometry[0][0]
@@ -328,7 +378,10 @@ def write_native(document,pages):
             text_x=text_spans[0]['bbox'][0] if text_spans else first['bbox'][0]
             pf.line_spacing=Pt(line_height);pf.space_before=Pt(round(max(0,top-previous_end)*20)/20);pf.space_after=Pt(0)
             pf.widow_control=False;pf.keep_with_next=False
-            pf.left_indent=Pt(max(0,(text_x if first['bullet'] else first['bbox'][0])-left));pf.right_indent=Pt(0)
+            body_x=group[1]['bbox'][0] if len(group)>1 else first['bbox'][0]
+            pf.left_indent=Pt(max(0,(text_x if first['bullet'] else body_x)-left));pf.right_indent=Pt(0)
+            if not first['bullet'] and first['bbox'][0]-body_x>=4:
+                pf.first_line_indent=Pt(first['bbox'][0]-body_x)
             if len(group)>1 and max(row['bbox'][2] for row in group)>right-1:
                 # The furthest visible glyph is only a lower bound on the
                 # original wrap width. Allow for Word's font/rounding variance.
@@ -344,13 +397,19 @@ def write_native(document,pages):
                 num=p._p.get_or_add_pPr().get_or_add_numPr()
                 num.get_or_add_ilvl().val=0;num.get_or_add_numId().val=numbers[key]
                 pf.tab_stops.add_tab_stop(Pt(text_x-left))
-            centered=not first['bullet'] and not first['side_by_side'] and first['bbox'][2]-first['bbox'][0]<(right-left)*.8 and abs((first['bbox'][0]+first['bbox'][2])/2-page.rect.width/2)<4
+            centered=len(group)==1 and not first['bullet'] and not first['side_by_side'] and first['bbox'][2]-first['bbox'][0]<(right-left)*.8 and abs((first['bbox'][0]+first['bbox'][2])/2-page.rect.width/2)<4
             if centered:
                 pf.alignment=WD_ALIGN_PARAGRAPH.CENTER;pf.left_indent=Pt(0)
                 # Preserve the PDF's actual center, including slight offsets.
                 shift=first['bbox'][0]+first['bbox'][2]-left-right
                 pf.left_indent=Pt(max(0,shift))
                 pf.right_indent=Pt(max(0,-shift))
+            elif len(group)==1 and not first['bullet'] and not first['side_by_side'] and first['bbox'][0]>left+(right-left)*.3 and abs(first['bbox'][2]-right)<1:
+                pf.alignment=WD_ALIGN_PARAGRAPH.RIGHT;pf.left_indent=Pt(0)
+            justified=(len(group)>=3 and all(abs(row['bbox'][2]-right)<1.5 for row in group[:-1])
+                       and right-last['bbox'][2]>first['size']*2)
+            if justified:
+                pf.alignment=WD_ALIGN_PARAGRAPH.JUSTIFY;pf.right_indent=Pt(0)
             if first['bold'] and not first['bullet']:
                 p.style='Heading 1' if first['size']>statistics.median(r['size'] for r in rows)*1.03 else 'Normal'
                 pf.keep_with_next=True
@@ -365,17 +424,19 @@ def write_native(document,pages):
                             pf.tab_stops.add_tab_stop(Pt(line['bbox'][2]-left),WD_TAB_ALIGNMENT.RIGHT);style_run(p.add_run('\t'),line['spans'][0],rises[gi])
                         elif gap>row['size']*.15:style_run(p.add_run(' '),line['spans'][0],rises[gi])
                     strip_bullet=gi==0 and li==0 and first['bullet']
-                    for si,span in enumerate(line['spans']):
+                    spans=[segment for span in line['spans'] for segment in decorated_spans(span,decorations)]
+                    for si,(span,decoration) in enumerate(spans):
                         text=span['text']
-                        if si==len(line['spans'])-1:text=text.rstrip()
+                        if si==len(spans)-1:text=text.rstrip()
                         if strip_bullet:
                             text=text.lstrip(BULLETS+' \t')
                             strip_bullet=not bool(text)
                         if not text:continue
                         uri=span_link(span,links)
                         run=add_link(p,uri,text) if uri else p.add_run(text)
-                        end_x=line['spans'][si+1]['bbox'][0] if si+1<len(line['spans']) else None
-                        style_run(run,span,rises[gi],row['baseline'],end_x)
+                        end_x=spans[si+1][0]['bbox'][0] if si+1<len(spans) else None
+                        style_run(run,span,rises[gi],row['baseline'],end_x,track=not justified)
+                        apply_decoration(run,decoration)
                         if uri:run.underline=True
             previous_end=top+line_height*len(group)
             count+=1
@@ -431,7 +492,7 @@ def convert(source,destination):
     document=pymupdf.open(source)
     if document.needs_pass:raise ValueError('Password-protected PDFs are not supported.')
     if not 0<len(document)<=100:raise ValueError('Use a PDF with 1–100 pages.')
-    source_text='';pages=[];native=True
+    source_text='';pages=[];page_decorations=[];native=True
     for page in document:
         page.remove_rotation()
         if max(page.rect.width,page.rect.height)>1584:raise ValueError('This PDF page exceeds Word’s 22-inch page limit.')
@@ -440,9 +501,12 @@ def convert(source,destination):
             raise ValueError('Equations in this PDF need Page layout (text boxes). Editable paragraphs cannot preserve these mathematical layouts reliably.')
         source_text+=page.get_text()
         if '\ufffd' in source_text:raise ValueError('This PDF has missing character mappings. No incomplete Word file was saved.')
-        rows=rows_on_page(page);pages.append((page,rows));native=native and simple_page(page,rows)
+        rows=rows_on_page(page);pages.append((page,rows))
+        if native:
+            decorations=text_decorations(page,rows);page_decorations.append(decorations)
+            native=simple_page(page,rows,decorations)
     if native:
-        data,count=write_native(document,pages)
+        data,count=write_native(document,pages,page_decorations)
     else:
         # Repair the library's invalid nested hyperlink markup at its source.
         from pdf2docx import Converter

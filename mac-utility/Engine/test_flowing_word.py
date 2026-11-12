@@ -16,6 +16,42 @@ import flowing_word as engine
 NS={'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
 
 class FlowingWordRegression(unittest.TestCase):
+    def test_exported_text_decorations_and_indented_paragraph_stay_editable(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source=Path(tmp)/'formatted.pdf';target=Path(tmp)/'formatted.docx'
+            size=11;left=72;right=540
+            def width(text):return pymupdf.get_text_length(text,fontname='helv',fontsize=size)
+
+            with pymupdf.open() as pdf:
+                page=pdf.new_page(width=612,height=792)
+                date='November 11, 2026'
+                page.insert_text((right-width(date),88),date,fontsize=size)
+                first='The first line is indented.'
+                while width(first+' editable words')<right-left-36:
+                    first+=' editable words'
+                continuation='The second line belongs to the same paragraph.'
+                page.insert_text((left+36,111),first,fontsize=size)
+                page.insert_text((left,124),continuation,fontsize=size)
+                line='An underlined word and highlighted text remain editable.'
+                for start,end,top,bottom,fill in (
+                    ('An ','An underlined word',149.6,150.4,(0,0,0)),
+                    ('An underlined word and ','An underlined word and highlighted text',138,151,(1,.95,.65)),
+                ):
+                    page.draw_rect(pymupdf.Rect(left+width(start),top,left+width(end),bottom),color=None,fill=fill)
+                page.insert_text((left,148),line,fontsize=size)
+                pdf.save(source)
+
+            self.assertEqual(engine.convert(str(source),str(target))['engine'],'native-flow')
+            with ZipFile(target) as archive:
+                root=etree.fromstring(archive.read('word/document.xml'))
+            date_node,body,decorated=root.xpath('//w:body/w:p',namespaces=NS)
+            self.assertTrue(date_node.xpath('./w:pPr/w:jc[@w:val="right"]',namespaces=NS))
+            self.assertTrue(body.xpath('./w:pPr/w:ind[@w:firstLine="720"]',namespaces=NS))
+            self.assertEqual(''.join(body.xpath('.//w:t/text()',namespaces=NS)),first+' '+continuation)
+            self.assertFalse(body.xpath('.//w:br',namespaces=NS))
+            self.assertEqual(decorated.xpath('./w:r[w:rPr/w:u]/w:t/text()',namespaces=NS),['underlined word'])
+            self.assertEqual(decorated.xpath('./w:r[w:rPr/w:shd]/w:t/text()',namespaces=NS),['highlighted text'])
+
     def test_short_side_labels_do_not_create_columns_and_links_remain_visible(self):
         with tempfile.TemporaryDirectory() as tmp:
             source=Path(tmp)/'test.pdf';target=Path(tmp)/'test.docx'

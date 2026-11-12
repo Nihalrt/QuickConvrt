@@ -29,6 +29,8 @@ Run the focused font regressions with `build/pdf-engine-env/bin/python Engine/te
 
 Every PDF → Word result is checked for actual editable text and rendered back to PDF locally. Paragraph mode also rejects text boxes and incomplete text. Page-layout mode checks the page count. These checks catch unusable files; they do not prove exact visual fidelity for arbitrary PDFs.
 
+Editable paragraphs preserve common text underlines, highlights, and first-line indents in browser-generated PDFs. If you still have the original editable document, export it directly to Word to retain its original document structure.
+
 **PDF → JPEG/PNG/TIFF** exports the visible crop with page rotation at up to 300 dpi, within the image size limits, and records DPI metadata for physical print size. PNG/TIFF are lossless outputs. JPEG uses high quality and a white background for transparency.
 
 ## Supported routes and limits

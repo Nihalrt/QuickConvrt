@@ -2,7 +2,7 @@
 
 Docenlume uses PyMuPDF and MuPDF under AGPL-3.0. The Mac build also bundles the original LibreOffice renderer and a frozen Python runtime. The build copies the installed Python packages' notices into `Contents/Resources/PDFEngine/licenses/` and retains LibreOffice's notices inside its bundle. React Native Windows template code carries its [original MIT notice](windows-app/THIRD-PARTY-TEMPLATE-LICENSE.txt).
 
-| Component | Source used for the Docenlume 0.4.13 Mac candidate |
+| Component | Source used for the Docenlume Mac build |
 | --- | --- |
 | Docenlume | This repository. The release tag identifies the source and build scripts for the installer. |
 | PyMuPDF 1.28.2 | [Source distribution on PyPI](https://pypi.org/project/PyMuPDF/1.28.2/#files). Choose `pymupdf-1.28.2.tar.gz`. |
