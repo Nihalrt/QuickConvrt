@@ -8,7 +8,7 @@ Docenlume converts documents and images locally. Pick a file, choose a format fr
 
 Docenlume is free to download and use. It targets **Apple Silicon Macs (M1 or newer) running macOS 13 or later**. To check your Mac, choose **Apple menu → About This Mac** and look for an Apple chip and the macOS version.
 
-**[Download the Mac preview ZIP](https://github.com/Nihalrt/Docenlume/releases/download/v0.4.13-preview/Docenlume-Mac-arm64-v0.4.13-DEV.zip).** Apple has not notarized this preview, so macOS may block it on first launch. You can also [build the app from source](mac-utility/README.md#build-and-install-locally).
+**[Download the Mac preview ZIP](https://github.com/Nihalrt/Docenlume/releases/download/v0.4.14-preview/Docenlume-Mac-arm64-v0.4.14-DEV.zip).** Apple has not notarized this preview, so macOS may block it on first launch. You can also [build the app from source](mac-utility/README.md#build-and-install-locally).
 
 1. In Finder, open **Downloads** and double-click the ZIP if your browser has not already extracted it.
 2. Drag **Docenlume.app** into **Applications** and open it from there.

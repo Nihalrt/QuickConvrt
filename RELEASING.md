@@ -34,8 +34,8 @@ xcrun notarytool submit Docenlume-notarization.zip --keychain-profile docenlume-
 xcrun stapler staple Docenlume.app
 xcrun stapler validate Docenlume.app
 spctl --assess --type execute --verbose Docenlume.app
-ditto -c -k --sequesterRsrc --keepParent Docenlume.app Docenlume-Mac-arm64-v0.4.13.zip
-shasum -a 256 Docenlume-Mac-arm64-v0.4.13.zip > Docenlume-Mac-arm64-v0.4.13.zip.sha256
+ditto -c -k --sequesterRsrc --keepParent Docenlume.app Docenlume-Mac-arm64-v0.4.14.zip
+shasum -a 256 Docenlume-Mac-arm64-v0.4.14.zip > Docenlume-Mac-arm64-v0.4.14.zip.sha256
 ```
 
-Test first launch, Finder Services, and a conversion using each engine from the final ZIP on a clean Apple Silicon Mac. Draft `v0.4.13` against the tested commit, attach the app ZIP, checksum, and corresponding source assets, and copy the [Mac install steps](README.md#install-on-macos) into the release notes. Publish and check the asset link from a signed-out browser. See [GitHub's release instructions](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository).
+Test first launch, Finder Services, and a conversion using each engine from the final ZIP on a clean Apple Silicon Mac. Draft `v0.4.14` against the tested commit, attach the app ZIP, checksum, and corresponding source assets, and copy the [Mac install steps](README.md#install-on-macos) into the release notes. Publish and check the asset link from a signed-out browser. See [GitHub's release instructions](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository).
