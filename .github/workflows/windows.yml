@@ -1,4 +1,4 @@
-name: Build Docenlume for Windows
+name: Build QuickConvrt for Windows
 on:
   workflow_dispatch:
   pull_request:
@@ -35,6 +35,6 @@ jobs:
       - run: npm run build:windows
       - name: Verify the desktop build contains its engine and JavaScript
         run: |
-          foreach ($Path in @('Docenlume.exe', 'Bundle/index.windows.bundle', 'engine/docenlume-engine.exe')) {
+          foreach ($Path in @('QuickConvrt.exe', 'Bundle/index.windows.bundle', 'engine/quickconvrt-engine.exe')) {
             if (!(Test-Path (Join-Path 'build/app/Release' $Path))) { throw "Build is missing $Path" }
           }

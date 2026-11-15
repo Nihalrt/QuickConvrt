@@ -8,9 +8,9 @@
     <CppWinRTGenerateWindowsMetadata>true</CppWinRTGenerateWindowsMetadata>
     <MinimalCoreWin>true</MinimalCoreWin>
     <ProjectGuid>{C2D68FBD-A425-4D38-8F87-8A11564C9F33}</ProjectGuid>
-    <ProjectName>Docenlume</ProjectName>
+    <ProjectName>QuickConvrt</ProjectName>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Docenlume</RootNamespace>
+    <RootNamespace>QuickConvrt</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>17.0</MinimumVisualStudioVersion>
@@ -105,7 +105,7 @@
   </PropertyGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClInclude Include="Docenlume.h" />
+    <ClInclude Include="QuickConvrt.h" />
     <ClInclude Include="ConversionModule.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="AutolinkedNativeModules.g.h" />
@@ -113,7 +113,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Docenlume.cpp" />
+    <ClCompile Include="QuickConvrt.cpp" />
     <ClCompile Include="AutolinkedNativeModules.g.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -125,10 +125,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Docenlume.rc" />
+    <ResourceCompile Include="QuickConvrt.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Docenlume.ico" />
+    <Image Include="QuickConvrt.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ReactNativeWindowsTargets">
@@ -143,18 +143,18 @@
     <Error Condition="!Exists('$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Composition.CppApp.props')" Text="$([System.String]::Format('$(ErrorText)', '$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Composition.CppApp.props'))" />
     <Error Condition="!Exists('$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Composition.CppApp.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Composition.CppApp.targets'))" />
   </Target>
-  <Target Name="CopyDocenlumeRuntime" AfterTargets="Build">
-    <Error Condition="'$(Platform)' != 'x64'" Text="Docenlume currently builds for Windows x64." />
+  <Target Name="CopyQuickConvrtRuntime" AfterTargets="Build">
+    <Error Condition="'$(Platform)' != 'x64'" Text="QuickConvrt currently builds for Windows x64." />
     <PropertyGroup>
-      <DocenlumeEngine>$(MSBuildProjectDirectory)\..\..\build\engine\docenlume-engine</DocenlumeEngine>
+      <QuickConvrtEngine>$(MSBuildProjectDirectory)\..\..\build\engine\quickconvrt-engine</QuickConvrtEngine>
     </PropertyGroup>
-    <Error Condition="!Exists('$(DocenlumeEngine)\docenlume-engine.exe')" Text="Build the Docenlume conversion engine with build-engine.ps1 first." />
+    <Error Condition="!Exists('$(QuickConvrtEngine)\quickconvrt-engine.exe')" Text="Build the QuickConvrt conversion engine with build-engine.ps1 first." />
     <ItemGroup>
-      <DocenlumeEngineFile Include="$(DocenlumeEngine)\**\*" />
-      <DocenlumeBundleFile Include="$(BundleContentRoot)\**\*" Condition="'$(UseBundle)' == 'true'" />
+      <QuickConvrtEngineFile Include="$(QuickConvrtEngine)\**\*" />
+      <QuickConvrtBundleFile Include="$(BundleContentRoot)\**\*" Condition="'$(UseBundle)' == 'true'" />
     </ItemGroup>
-    <Copy SourceFiles="@(DocenlumeEngineFile)" DestinationFiles="@(DocenlumeEngineFile->'$(OutDir)engine\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
-    <Error Condition="'$(UseBundle)' == 'true' and !Exists('$(BundleOutputFile)')" Text="The Docenlume JavaScript bundle is missing." />
-    <Copy SourceFiles="@(DocenlumeBundleFile)" DestinationFiles="@(DocenlumeBundleFile->'$(OutDir)Bundle\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" Condition="'$(UseBundle)' == 'true'" />
+    <Copy SourceFiles="@(QuickConvrtEngineFile)" DestinationFiles="@(QuickConvrtEngineFile->'$(OutDir)engine\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Error Condition="'$(UseBundle)' == 'true' and !Exists('$(BundleOutputFile)')" Text="The QuickConvrt JavaScript bundle is missing." />
+    <Copy SourceFiles="@(QuickConvrtBundleFile)" DestinationFiles="@(QuickConvrtBundleFile->'$(OutDir)Bundle\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" Condition="'$(UseBundle)' == 'true'" />
   </Target>
 </Project>

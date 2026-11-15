@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-<key>CFBundleExecutable</key><string>Docenlume</string>
+<key>CFBundleExecutable</key><string>QuickConvrt</string>
 <key>CFBundleIdentifier</key><string>local.easyconvert.utility</string>
-<key>CFBundleName</key><string>Docenlume</string>
-<key>CFBundleDisplayName</key><string>Docenlume</string>
+<key>CFBundleName</key><string>QuickConvrt</string>
+<key>CFBundleDisplayName</key><string>QuickConvrt</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleIconFile</key><string>Docenlume.icns</string>
-<key>CFBundleShortVersionString</key><string>0.4.14</string>
-<key>CFBundleVersion</key><string>26</string>
+<key>CFBundleIconFile</key><string>QuickConvrt.icns</string>
+<key>CFBundleShortVersionString</key><string>0.4.15</string>
+<key>CFBundleVersion</key><string>27</string>
 <key>LSMinimumSystemVersion</key><string>13.0</string>
 <key>LSUIElement</key><true/>
 <key>NSHighResolutionCapable</key><true/>
@@ -20,9 +20,9 @@
 <key>LSItemContentTypes</key><array><string>public.image</string><string>com.adobe.pdf</string><string>public.text</string><string>public.rtf</string><string>org.openxmlformats.wordprocessingml.document</string><string>com.microsoft.word.doc</string><string>org.oasis-open.opendocument.text</string></array>
 </dict></array>
 <key>NSServices</key><array><dict>
-<key>NSMenuItem</key><dict><key>default</key><string>Convert with Docenlume</string></dict>
+<key>NSMenuItem</key><dict><key>default</key><string>Convert with QuickConvrt</string></dict>
 <key>NSMessage</key><string>convertFiles</string>
-<key>NSPortName</key><string>Docenlume</string>
+<key>NSPortName</key><string>QuickConvrt</string>
 <key>NSSendTypes</key><array><string>public.file-url</string><string>NSFilenamesPboardType</string></array>
 <key>NSRequiredContext</key><dict><key>NSServiceCategory</key><string>public.data</string></dict>
 </dict></array>

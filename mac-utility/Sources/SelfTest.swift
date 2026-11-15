@@ -7,7 +7,7 @@ func runSelfTest() throws {
         guard condition else { throw ConversionFailure(description) }
         print("PASS: \(description)")
     }
-    let directory = FileManager.default.temporaryDirectory.appendingPathComponent("Docenlume-test-\(UUID().uuidString)")
+    let directory = FileManager.default.temporaryDirectory.appendingPathComponent("QuickConvrt-test-\(UUID().uuidString)")
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
     let outputDirectory = directory.appendingPathComponent("Chosen folder")
@@ -129,7 +129,7 @@ func runSelfTest() throws {
 func runWidgetConversionTest() throws {
     let app = NSApplication.shared
     app.setActivationPolicy(.prohibited)
-    let directory = FileManager.default.temporaryDirectory.appendingPathComponent("Docenlume-widget-test-\(UUID().uuidString)")
+    let directory = FileManager.default.temporaryDirectory.appendingPathComponent("QuickConvrt-widget-test-\(UUID().uuidString)")
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
     let source = directory.appendingPathComponent("widget-check.rtf")
@@ -225,7 +225,7 @@ func runWidgetConversionTest() throws {
     unzip.waitUntilExit()
     guard unzip.terminationStatus == 0,
           try Data(contentsOf: extracted.appendingPathComponent(source.lastPathComponent)) == Data(contentsOf: source),
-          try Data(contentsOf: extracted.appendingPathComponent("Docenlume").appendingPathComponent(otherFile.lastPathComponent)) == otherContents,
+          try Data(contentsOf: extracted.appendingPathComponent("QuickConvrt").appendingPathComponent(otherFile.lastPathComponent)) == otherContents,
           FileManager.default.contentsEqual(atPath: largeFile.path, andPath: extracted.appendingPathComponent(largeFile.lastPathComponent).path),
           try (archive.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? Int.max) < 1024 * 1024 else {
         throw ConversionFailure("ZIP did not compress and preserve all three files")

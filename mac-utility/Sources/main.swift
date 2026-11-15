@@ -21,10 +21,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let menu = NSMenu()
         let root = NSMenuItem(); menu.addItem(root)
         let appMenu = NSMenu(); root.submenu = appMenu
-        appMenu.addItem(withTitle: "About Docenlume", action: #selector(showHelp), keyEquivalent: "")
+        appMenu.addItem(withTitle: "About QuickConvrt", action: #selector(showHelp), keyEquivalent: "")
         let servicesItem = NSMenuItem(title: "Services", action: nil, keyEquivalent: "")
         let services = NSMenu(); servicesItem.submenu = services; appMenu.addItem(servicesItem); NSApp.servicesMenu = services
-        appMenu.addItem(withTitle: "Quit Docenlume", action: #selector(quit), keyEquivalent: "q")
+        appMenu.addItem(withTitle: "Quit QuickConvrt", action: #selector(quit), keyEquivalent: "q")
         NSApp.mainMenu = menu
 
         panel = UtilityPanel(contentRect: NSRect(origin: .zero, size: WidgetView.size), styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
@@ -33,12 +33,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         panel.isOpaque = false; panel.backgroundColor = .clear; panel.hasShadow = false
         panel.acceptsMouseMovedEvents = true
         panel.isMovableByWindowBackground = true; panel.hidesOnDeactivate = false
-        panel.title = "Docenlume"
+        panel.title = "QuickConvrt"
         widget = WidgetView(owner: self); panel.contentView = widget
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "arrow.triangle.swap", accessibilityDescription: "Docenlume")
-            button.toolTip = "Docenlume · ⌃⌥⌘E · Right-click for options"
+            button.image = NSImage(systemSymbolName: "arrow.triangle.swap", accessibilityDescription: "QuickConvrt")
+            button.toolTip = "QuickConvrt · ⌃⌥⌘E · Right-click for options"
             button.target = self; button.action = #selector(statusClicked(_:))
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
@@ -64,8 +64,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             menu.addItem(withTitle: "Choose files…", action: #selector(chooseFiles), keyEquivalent: "")
             menu.addItem(withTitle: "Use copied files", action: #selector(pasteFiles), keyEquivalent: "")
             menu.addItem(.separator())
-            menu.addItem(withTitle: "How to use Docenlume", action: #selector(showHelp), keyEquivalent: "")
-            menu.addItem(withTitle: "Quit Docenlume", action: #selector(quit), keyEquivalent: "q")
+            menu.addItem(withTitle: "How to use QuickConvrt", action: #selector(showHelp), keyEquivalent: "")
+            menu.addItem(withTitle: "Quit QuickConvrt", action: #selector(quit), keyEquivalent: "q")
             for item in menu.items { item.target = self }
             statusItem.menu = menu; statusItem.button?.performClick(nil); statusItem.menu = nil
         } else if panel.isVisible { panel.orderOut(nil) }
@@ -111,7 +111,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         guard !widget.busy, !showingPicker else { return }
         let picker = NSOpenPanel()
         picker.title = "Where should converted files be saved?"
-        picker.message = "Choose a save folder. Docenlume remembers it; you can change it anytime using Save to."
+        picker.message = "Choose a save folder. QuickConvrt remembers it; you can change it anytime using Save to."
         picker.prompt = "Save here"
         picker.canChooseFiles = false
         picker.canChooseDirectories = true
@@ -248,11 +248,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }, 1, &spec, pointer, &eventHandler)
         let id = EventHotKeyID(signature: OSType(0x45434E56), id: 1)
         let result = RegisterEventHotKey(UInt32(kVK_ANSI_E), UInt32(controlKey | optionKey | cmdKey), id, GetApplicationEventTarget(), 0, &hotKey)
-        if result != noErr { statusItem.button?.toolTip = "Docenlume · Shortcut unavailable; click to open" }
+        if result != noErr { statusItem.button?.toolTip = "QuickConvrt · Shortcut unavailable; click to open" }
     }
 
     @objc func showHelp() {
-        showNotice("Docenlume lives where you work", "1. Select files in Finder → right-click → Services → Convert with Docenlume.\n\n2. Or copy files in Finder, click the menu-bar icon, and paste (⌘V). You can also drop files directly onto the widget.\n\n3. Pick a format and choose a folder using Save to, then Convert. Docenlume remembers your preferred folder. If none is set, Convert asks where to save first. Multi-page images go into a new subfolder at that destination.\n\n⌃⌥⌘E opens the widget from other apps. Pin it to keep it floating. Escape hides it.\n\nSupported: PDF; TXT/MD/CSV/JSON; DOC/DOCX/RTF/ODT; and macOS-readable images. Word → PDF and office → page images use the local document renderer to retain document layout, tables, images, and styling. PDF → Word defaults to Editable paragraphs: normal Word paragraphs, native bullet lists, hyperlinks and tables. Text can reflow when edited. It works entirely offline. Short side-by-side labels use tabs instead of artificial columns. Complex pages may reflow differently. Page layout (text boxes) is an explicit alternative for equations and fixed designs; it retains page positions but uses text boxes. Scans and exact semantic equation reconstruction are not supported. Diagrams remain graphics; page text is never replaced with screenshots. Scanned PDFs need OCR. PDF → images renders at up to 300 dpi. TXT output is plain text by definition. PSD uses a flattened preview; PSD export is unavailable.\n\nFor Finder Services to appear, keep Docenlume in Applications and open it once. If hidden, enable it in System Settings → Keyboard → Keyboard Shortcuts → Services → Files and Folders.\n\nThis local development build is ad-hoc signed, not notarized for distribution.")
+        showNotice("QuickConvrt lives where you work", "1. Select files in Finder → right-click → Services → Convert with QuickConvrt.\n\n2. Or copy files in Finder, click the menu-bar icon, and paste (⌘V). You can also drop files directly onto the widget.\n\n3. Pick a format and choose a folder using Save to, then Convert. QuickConvrt remembers your preferred folder. If none is set, Convert asks where to save first. Multi-page images go into a new subfolder at that destination.\n\n⌃⌥⌘E opens the widget from other apps. Pin it to keep it floating. Escape hides it.\n\nSupported: PDF; TXT/MD/CSV/JSON; DOC/DOCX/RTF/ODT; and macOS-readable images. Word → PDF and office → page images use the local document renderer to retain document layout, tables, images, and styling. PDF → Word defaults to Editable paragraphs: normal Word paragraphs, native bullet lists, hyperlinks and tables. Text can reflow when edited. It works entirely offline. Short side-by-side labels use tabs instead of artificial columns. Complex pages may reflow differently. Page layout (text boxes) is an explicit alternative for equations and fixed designs; it retains page positions but uses text boxes. Scans and exact semantic equation reconstruction are not supported. Diagrams remain graphics; page text is never replaced with screenshots. Scanned PDFs need OCR. PDF → images renders at up to 300 dpi. TXT output is plain text by definition. PSD uses a flattened preview; PSD export is unavailable.\n\nFor Finder Services to appear, keep QuickConvrt in Applications and open it once. If hidden, enable it in System Settings → Keyboard → Keyboard Shortcuts → Services → Files and Folders.\n\nThis local development build is ad-hoc signed, not notarized for distribution.")
     }
 
     func showNotice(_ title: String, _ message: String, actionTitle: String? = nil, action: (() -> Void)? = nil) {

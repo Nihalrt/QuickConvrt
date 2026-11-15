@@ -12,7 +12,7 @@ import pymupdf
 
 
 def check(command: list[str]) -> None:
-    with TemporaryDirectory(prefix="Docenlume smoke ") as temporary:
+    with TemporaryDirectory(prefix="QuickConvrt smoke ") as temporary:
         root = Path(temporary).resolve()
         folder = root / "Save folder"
         folder.mkdir()
@@ -36,7 +36,7 @@ def check(command: list[str]) -> None:
         word = convert(pdf, "docx")
         assert word.name == "Project notes.v2.docx"
         assert "Québec" in " ".join(p.text for p in Document(word).paragraphs)
-        assert convert(source, "pdf") == folder / "Docenlume" / pdf.name
+        assert convert(source, "pdf") == folder / "QuickConvrt" / pdf.name
         assert source.read_text(encoding="utf-8") == contents
         with Image.open(convert(pdf, "png")) as image:
             assert image.format == "PNG"
@@ -60,9 +60,9 @@ def check(command: list[str]) -> None:
         assert archive.name == "Archive.zip"
         with ZipFile(archive) as zipped:
             assert zipped.read(source.name) == source.read_bytes()
-            assert zipped.read("Docenlume/Project notes.v2.txt") == duplicate.read_bytes()
+            assert zipped.read("QuickConvrt/Project notes.v2.txt") == duplicate.read_bytes()
             assert zipped.read(extra.name) == extra.read_bytes()
-        assert convert([source, duplicate], "zip") == folder / "Docenlume 2" / archive.name
+        assert convert([source, duplicate], "zip") == folder / "QuickConvrt 2" / archive.name
 
         large_file = root / "Large sample.bin"
         with large_file.open("wb") as sample:
@@ -85,8 +85,8 @@ def check(command: list[str]) -> None:
             assert reduced.stat().st_size < picture.stat().st_size
             with Image.open(reduced) as saved:
                 assert saved.format == "PNG" and saved.tobytes() == original.tobytes()
-        assert convert(picture, "reduce-size") == folder / "Docenlume 3" / picture.name
-        assert convert(picture, "reduce-size", save_to=root) == root / "Docenlume" / picture.name
+        assert convert(picture, "reduce-size") == folder / "QuickConvrt 3" / picture.name
+        assert convert(picture, "reduce-size", save_to=root) == root / "QuickConvrt" / picture.name
         before = set(folder.iterdir())
         subprocess.run([*command, str(reduced), str(folder), "reduce-size", "flowing", str(response)], check=True)
         assert response.read_text(encoding="utf-8").startswith("ERROR\nThis file is already compact.")

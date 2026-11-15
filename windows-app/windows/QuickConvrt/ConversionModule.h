@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace docenlume {
+namespace quickconvrt {
 namespace fs = std::filesystem;
 using namespace winrt::Microsoft::ReactNative;
 inline HWND ownerWindow{};
@@ -75,10 +75,10 @@ struct TempResult {
 inline std::string RunEngine(std::vector<std::wstring> const &arguments) {
   std::wstring appPath(32768, L'\0');
   const DWORD length = GetModuleFileNameW(nullptr, appPath.data(), static_cast<DWORD>(appPath.size()));
-  if (!length || length >= appPath.size()) throw std::runtime_error("Couldn’t locate Docenlume.");
+  if (!length || length >= appPath.size()) throw std::runtime_error("Couldn’t locate QuickConvrt.");
   appPath.resize(length);
-  const auto executable = fs::path(appPath).parent_path() / L"engine" / L"docenlume-engine.exe";
-  if (!fs::is_regular_file(executable)) throw std::runtime_error("The local conversion engine is missing. Rebuild Docenlume with its engine.");
+  const auto executable = fs::path(appPath).parent_path() / L"engine" / L"quickconvrt-engine.exe";
+  if (!fs::is_regular_file(executable)) throw std::runtime_error("The local conversion engine is missing. Rebuild QuickConvrt with its engine.");
   TempResult result;
   std::wstring command = Quote(executable.native());
   for (auto const &arg : arguments) command += L" " + Quote(arg);
@@ -114,8 +114,8 @@ inline winrt::fire_and_forget ConvertInBackground(
   }
 }
 
-REACT_MODULE(DocenlumeFiles)
-struct DocenlumeFiles {
+REACT_MODULE(QuickConvrtFiles)
+struct QuickConvrtFiles {
   REACT_INIT(Initialize)
   void Initialize(ReactContext const &context) noexcept { context_ = context; }
 
@@ -151,4 +151,4 @@ struct DocenlumeFiles {
  private:
   ReactContext context_;
 };
-} // namespace docenlume
+} // namespace quickconvrt

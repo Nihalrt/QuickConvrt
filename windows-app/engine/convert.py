@@ -40,7 +40,8 @@ def read_text(path: Path) -> str:
 
 
 def office_convert(source: Path, target: str, work: Path) -> Path:
-    configured = os.environ.get("DOCENLUME_LIBREOFFICE") or os.environ.get("EASYCONVERT_LIBREOFFICE")
+    configured = (os.environ.get("QUICKCONVRT_LIBREOFFICE") or os.environ.get("DOCENLUME_LIBREOFFICE")
+                  or os.environ.get("EASYCONVERT_LIBREOFFICE"))
     candidates = [configured, shutil.which("soffice.com"), shutil.which("soffice")]
     for key in ("ProgramW6432", "ProgramFiles", "ProgramFiles(x86)"):
         if root := os.environ.get(key):
@@ -195,7 +196,7 @@ def save_named(folder: Path, name: str, write: Callable[[Path], None]) -> Path:
         except FileExistsError:
             pass
     for counter in range(1, 10_001):
-        subfolder = folder / ("Docenlume" if counter == 1 else f"Docenlume {counter}")
+        subfolder = folder / ("QuickConvrt" if counter == 1 else f"QuickConvrt {counter}")
         try:
             subfolder.mkdir()
         except FileExistsError:
@@ -210,7 +211,7 @@ def save_named(folder: Path, name: str, write: Callable[[Path], None]) -> Path:
             except OSError:
                 pass
             raise
-    raise ValueError("Choose another save folder. Too many Docenlume folders already exist here.")
+    raise ValueError("Choose another save folder. Too many QuickConvrt folders already exist here.")
 
 
 def save(outputs: list[Path], source: Path, folder: Path, target: str) -> Path:
@@ -246,7 +247,7 @@ def convert(source: Path, folder: Path, target: str, mode: str) -> Path:
     if target == "reduce-size":
         if not source.is_file():
             raise ValueError("Choose a file to compress.")
-        with TemporaryDirectory(prefix="docenlume-") as directory:
+        with TemporaryDirectory(prefix="quickconvrt-") as directory:
             candidate = Path(directory) / "compressed"
             reduce_size(source, candidate)
             return save_named(folder, source.name, lambda destination: copy_new(candidate, destination))
@@ -257,7 +258,7 @@ def convert(source: Path, folder: Path, target: str, mode: str) -> Path:
         raise ValueError("Files must be 100 MB or smaller.")
     if ALIASES.get(kind, kind) == target:
         raise ValueError(f"This file is already {target.upper()}. Pick another format.")
-    with TemporaryDirectory(prefix="docenlume-") as directory:
+    with TemporaryDirectory(prefix="quickconvrt-") as directory:
         outputs = render(source, kind, target, mode, Path(directory))
         return save(outputs, source, folder, target)
 
@@ -267,7 +268,7 @@ def compress(sources: list[Path], folder: Path) -> Path:
     if not folder.is_dir():
         raise ValueError("Choose an available save folder.")
     name = output_name(sources[0], "zip") if len(sources) == 1 else "Archive.zip"
-    with TemporaryDirectory(prefix="docenlume-") as directory:
+    with TemporaryDirectory(prefix="quickconvrt-") as directory:
         archive = Path(directory) / "output.zip"
         used = set()
         taken_names = {source.name.casefold() for source in sources}
@@ -280,7 +281,7 @@ def compress(sources: list[Path], folder: Path) -> Path:
                 if entry.casefold() in used:
                     while True:
                         duplicate_count += 1
-                        directory_name = "Docenlume" if duplicate_count == 1 else f"Docenlume {duplicate_count}"
+                        directory_name = "QuickConvrt" if duplicate_count == 1 else f"QuickConvrt {duplicate_count}"
                         if directory_name.casefold() not in taken_names:
                             break
                     entry = f"{directory_name}/{entry}"

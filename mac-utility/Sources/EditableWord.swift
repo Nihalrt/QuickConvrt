@@ -80,7 +80,7 @@ extension Converter {
     static func runPDFEngine(source: URL, result: URL, mode: String, timeout: Int = 180, timeoutMessage: String, failureMessage: String) throws {
         guard let helper = Bundle.main.resourceURL?.appendingPathComponent("PDFEngine/pdf-editable"),
               FileManager.default.isExecutableFile(atPath: helper.path) else {
-            throw ConversionFailure("The local conversion engine is missing. Reinstall the complete Docenlume app.")
+            throw ConversionFailure("The local conversion engine is missing. Reinstall the complete QuickConvrt app.")
         }
         let log = result.deletingLastPathComponent().appendingPathComponent("conversion.log")
         FileManager.default.createFile(atPath: log.path, contents: nil)

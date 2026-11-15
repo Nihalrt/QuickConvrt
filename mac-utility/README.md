@@ -1,14 +1,14 @@
-# Docenlume for Mac
+# QuickConvrt for Mac
 
 A native menu-bar utility with a circular format picker, Finder Services, drag and drop, and a global shortcut. All conversions run locally. No account, API credentials, subscription, or upload is needed.
 
 ## Use
 
-Open `/Applications/Docenlume.app`. Click the two-arrow menu-bar icon or press **⌃⌥⌘E**. Select files in Finder → right-click → **Services → Convert with Docenlume**, or drop/paste copied files into the widget. Choose an output format, choose a **Save to** folder, and click **Convert**.
+Open `/Applications/QuickConvrt.app`. Click the two-arrow menu-bar icon or press **⌃⌥⌘E**. Select files in Finder → right-click → **Services → Convert with QuickConvrt**, or drop/paste copied files into the widget. Choose an output format, choose a **Save to** folder, and click **Convert**.
 
 The destination is remembered. Same-format inputs are skipped; existing files are never overwritten. The pin keeps the widget above other apps. Escape hides it. Right-click the menu-bar icon to quit.
 
-Docenlume keeps the original filename and changes only the extension when the format changes. If a name is already in use, the result goes into a new **Docenlume** subfolder. When one document produces several page images, each numbered page folder contains an image with the original filename and its new extension.
+QuickConvrt keeps the original filename and changes only the extension when the format changes. If a name is already in use, the result goes into a new **QuickConvrt** subfolder. When one document produces several page images, each numbered page folder contains an image with the original filename and its new extension.
 
 Choose **Compress → Reduce file size** for a smaller PDF, JPEG, or PNG. Choose **Create ZIP** to bundle files of any type and preserve their contents. Both modes accept files over 100 MB. Savings vary with the input. Some files are already compressed.
 
@@ -58,18 +58,18 @@ build/pdf-engine-env/bin/python -m pip install -r Engine/requirements.txt
 ./stage-office-engine.sh /Applications/LibreOffice.app
 ./build-engine.sh
 ./build.sh
-build/Docenlume.app/Contents/MacOS/Docenlume --self-test
+build/QuickConvrt.app/Contents/MacOS/QuickConvrt --self-test
 ```
 
-Open `mac-utility/build` in Finder, drag **Docenlume.app** into **Applications**, and open it. This build is for local development. See the [release checklist](../RELEASING.md) to prepare a public download.
+Open `mac-utility/build` in Finder, drag **QuickConvrt.app** into **Applications**, and open it. This build is for local development. See the [release checklist](../RELEASING.md) to prepare a public download.
 
 The renderer is packaged at `Contents/Resources/OfficeEngine/LibreOfficeDev.app`. The local PDF helper and its runtime are at `Contents/Resources/PDFEngine`. Its source is included in `PDFEngine/source/`. Third-party licenses are in `PDFEngine/licenses/` and in the nested LibreOffice bundle. See the [third-party notices](../THIRD-PARTY.md) for the release dependencies and source links.
 
 CLI examples:
 
 ```sh
-build/Docenlume.app/Contents/MacOS/Docenlume --convert /path/input.docx pdf /path/output-folder
-build/Docenlume.app/Contents/MacOS/Docenlume --pdf-to-word /path/input.pdf /path/output-folder
+build/QuickConvrt.app/Contents/MacOS/QuickConvrt --convert /path/input.docx pdf /path/output-folder
+build/QuickConvrt.app/Contents/MacOS/QuickConvrt --pdf-to-word /path/input.pdf /path/output-folder
 ```
 
 ## Verification

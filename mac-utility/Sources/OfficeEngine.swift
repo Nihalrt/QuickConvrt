@@ -7,10 +7,10 @@ enum OfficeEngine {
         guard [.pdf, .docx].contains(format) else { throw ConversionFailure("Unsupported office export.") }
         guard let executable = Bundle.main.resourceURL?.appendingPathComponent("OfficeEngine/LibreOfficeDev.app/Contents/MacOS/soffice"),
               FileManager.default.isExecutableFile(atPath: executable.path) else {
-            throw ConversionFailure("The document renderer is missing. Reinstall the complete Docenlume app; formatting will not be replaced with plain text.")
+            throw ConversionFailure("The document renderer is missing. Reinstall the complete QuickConvrt app; formatting will not be replaced with plain text.")
         }
         let fm = FileManager.default
-        let work = fm.temporaryDirectory.appendingPathComponent("Docenlume-office-\(UUID().uuidString)", isDirectory: true)
+        let work = fm.temporaryDirectory.appendingPathComponent("QuickConvrt-office-\(UUID().uuidString)", isDirectory: true)
         try fm.createDirectory(at: work, withIntermediateDirectories: true)
         defer { try? fm.removeItem(at: work) }
         let profile = work.appendingPathComponent("profile", isDirectory: true)

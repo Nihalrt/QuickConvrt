@@ -33,7 +33,7 @@ const compressionModes = [
   {key: 'zip', label: 'Create ZIP'},
 ] as const;
 type CompressionMode = (typeof compressionModes)[number]['key'];
-const modules = () => TurboModuleRegistry.getEnforcing<FileOperations>('DocenlumeFiles');
+const modules = () => TurboModuleRegistry.getEnforcing<FileOperations>('QuickConvrtFiles');
 
 function filename(path: string) {
   return path.split(/[\\/]/).filter(Boolean).pop() ?? path;
@@ -150,7 +150,7 @@ export default function App() {
 
   return (
     <ScrollView style={styles.background} contentContainerStyle={styles.page}>
-      <Text accessibilityRole="header" style={styles.title}>Docenlume</Text>
+      <Text accessibilityRole="header" style={styles.title}>QuickConvrt</Text>
       <View style={[styles.wheel, {width: size, height: size, borderRadius: center}]}>
         {formats.map((item, index) => {
           const slice = 2 * Math.PI / formats.length;

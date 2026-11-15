@@ -105,7 +105,7 @@ enum Converter {
             }
         }
         for number in 1...10_000 {
-            let nameOfFolder = number == 1 ? "Docenlume" : "Docenlume \(number)"
+            let nameOfFolder = number == 1 ? "QuickConvrt" : "QuickConvrt \(number)"
             let subfolder = folder.appendingPathComponent(nameOfFolder, isDirectory: true)
             do {
                 try manager.createDirectory(at: subfolder, withIntermediateDirectories: false)
@@ -122,7 +122,7 @@ enum Converter {
                 throw error
             }
         }
-        throw ConversionFailure("Choose another save folder. Too many Docenlume folders already exist here.")
+        throw ConversionFailure("Choose another save folder. Too many QuickConvrt folders already exist here.")
     }
 
     static func moveIntoOutputFolder(_ file: URL, named name: String, in folder: URL) throws -> URL {
@@ -298,7 +298,7 @@ enum Converter {
         if document.pageCount == 1 {
             return try save(renderPage(0, of: document, as: format), from: source, as: format, in: outputDirectory)
         }
-        let staging = outputDirectory.appendingPathComponent(".docenlume-\(UUID())", isDirectory: true)
+        let staging = outputDirectory.appendingPathComponent(".quickconvrt-\(UUID())", isDirectory: true)
         let manager = FileManager.default
         try manager.createDirectory(at: staging, withIntermediateDirectories: false)
         defer { try? manager.removeItem(at: staging) }

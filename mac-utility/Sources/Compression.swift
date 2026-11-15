@@ -30,7 +30,7 @@ extension Converter {
         }
 
         let manager = FileManager.default
-        let work = manager.temporaryDirectory.appendingPathComponent("Docenlume-\(UUID())", isDirectory: true)
+        let work = manager.temporaryDirectory.appendingPathComponent("QuickConvrt-\(UUID())", isDirectory: true)
         try manager.createDirectory(at: work, withIntermediateDirectories: false)
         defer { try? manager.removeItem(at: work) }
         let input = work.appendingPathComponent("source").appendingPathExtension(source.pathExtension)
@@ -44,7 +44,7 @@ extension Converter {
         guard size > 0, size < originalSize else {
             throw ConversionFailure("This file is already compact. No smaller copy was saved.")
         }
-        let staging = outputDirectory.appendingPathComponent(".docenlume-\(UUID())", isDirectory: true)
+        let staging = outputDirectory.appendingPathComponent(".quickconvrt-\(UUID())", isDirectory: true)
         try manager.createDirectory(at: staging, withIntermediateDirectories: false)
         defer { try? manager.removeItem(at: staging) }
         let staged = staging.appendingPathComponent(result.lastPathComponent)

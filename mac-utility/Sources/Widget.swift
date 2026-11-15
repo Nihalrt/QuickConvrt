@@ -15,7 +15,7 @@ private let widgetHeight: CGFloat = 552
 private func floatingGlass(around content: NSView, in frame: NSRect, radius: CGFloat, tint: NSColor? = nil) -> NSView {
     content.frame = NSRect(origin: .zero, size: frame.size)
     content.autoresizingMask = [.width, .height]
-    #if DOCENLUME_NATIVE_GLASS
+    #if QUICKCONVRT_NATIVE_GLASS
     if #available(macOS 26.0, *) {
         let glass = NSGlassEffectView(frame: frame)
         glass.cornerRadius = radius
@@ -306,7 +306,7 @@ class WidgetView: FlippedView {
         brand.image = NSImage(systemSymbolName: "arrow.triangle.swap", accessibilityDescription: nil)
         brand.contentTintColor = accent
         toolbar.addSubview(brand)
-        toolbar.addSubview(label("Docenlume", size: 12, weight: .semibold, color: ink,
+        toolbar.addSubview(label("QuickConvrt", size: 12, weight: .semibold, color: ink,
                                  frame: NSRect(x: 37, y: 9, width: 82, height: 17)))
         let paste = iconButton("clipboard", frame: NSRect(x: 117, y: 4, width: 26, height: 26), action: #selector(pasteFiles))
         paste.toolTip = "Paste copied files from Finder (⌘V)"

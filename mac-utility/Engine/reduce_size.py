@@ -24,7 +24,7 @@ def reduce_pdf(source: Path, destination: Path, original_size: int) -> None:
             return
         if not any(page.get_images() for page in pdf):
             return
-        with TemporaryDirectory(prefix="docenlume-pdf-", dir=destination.parent) as directory:
+        with TemporaryDirectory(prefix="quickconvrt-pdf-", dir=destination.parent) as directory:
             candidate = Path(directory) / "images.pdf"
             pdf.rewrite_images(dpi_threshold=200, dpi_target=150, quality=80, bitonal=False)
             pdf.ez_save(candidate)

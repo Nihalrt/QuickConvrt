@@ -24,7 +24,7 @@
     <ClInclude Include="ConversionModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Docenlume.h">
+    <ClInclude Include="QuickConvrt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AutolinkedNativeModules.g.h">
@@ -35,7 +35,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Docenlume.cpp">
+    <ClCompile Include="QuickConvrt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AutolinkedNativeModules.g.cpp">
@@ -46,12 +46,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Docenlume.rc">
+    <ResourceCompile Include="QuickConvrt.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Docenlume.ico">
+    <Image Include="QuickConvrt.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

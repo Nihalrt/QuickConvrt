@@ -14,7 +14,7 @@ extension Converter {
         try validateOutputDirectory(outputDirectory)
 
         let manager = FileManager.default
-        let inputs = manager.temporaryDirectory.appendingPathComponent("Docenlume-\(UUID())", isDirectory: true)
+        let inputs = manager.temporaryDirectory.appendingPathComponent("QuickConvrt-\(UUID())", isDirectory: true)
         try manager.createDirectory(at: inputs, withIntermediateDirectories: false)
         defer { try? manager.removeItem(at: inputs) }
 
@@ -36,7 +36,7 @@ extension Converter {
             }
         }
 
-        let scratch = outputDirectory.appendingPathComponent(".docenlume-\(UUID())", isDirectory: true)
+        let scratch = outputDirectory.appendingPathComponent(".quickconvrt-\(UUID())", isDirectory: true)
         try manager.createDirectory(at: scratch, withIntermediateDirectories: false)
         defer { try? manager.removeItem(at: scratch) }
         let archive = scratch.appendingPathComponent("output.zip")
