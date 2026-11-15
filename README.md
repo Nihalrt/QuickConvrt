@@ -1,7 +1,5 @@
 # QuickConvrt
 
-Formerly Docenlume.
-
 <img src="mac-utility/Assets/QuickConvrt.png" alt="QuickConvrt app icon" width="128">
 
 QuickConvrt converts documents and images locally. Pick a file, choose a format from the wheel, and save the result to a folder you choose. The Mac utility lives in the menu bar. The React Native Windows source preview runs in a desktop window.
